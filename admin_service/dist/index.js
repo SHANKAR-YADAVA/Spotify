@@ -1,0 +1,53 @@
+import express from "express";
+import dotenv from "dotenv";
+import cloudinary from "cloudinary";
+import cors from "cors";
+import { sql } from "./config/db.js";
+dotenv.config();
+cloudinary.v2.config({
+    cloud_name: process.env.Cloud_Name,
+    api_key: process.env.Cloud_Api_Key,
+    api_secret: process.env.Cloud_Api_Secret,
+});
+const app = express();
+app.use(cors());
+app.use(express.json());
+async function initDB() {
+    try {
+        await sql `
+        CREATE TABLE IF NOT EXISTS albums(
+          id SERIAL PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          description VARCHAR(255) NOT NULL,
+          thumbnail VARCHAR(255) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        `;
+        await sql `
+        CREATE TABLE IF NOT EXISTS songs(
+          id SERIAL PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          description VARCHAR(255) NOT NULL,
+          thumbnail VARCHAR(255),
+          audio VARCHAR(255) NOT NULL,
+          album_id INTEGER REFERENCES albums(id) ON DELETE SET NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        `;
+        console.log("Database initialized successfully");
+    }
+    catch (error) {
+        console.log("Error initDb", error);
+    }
+}
+app.use("/api/v1", async (req, res) => {
+    res.status(200).json({
+        message: "Welcome to the Admin Service"
+    });
+});
+const port = process.env.PORT;
+initDB().then(() => {
+    app.listen(port, () => {
+        console.log(`server is running on port ${port}`);
+    });
+});
