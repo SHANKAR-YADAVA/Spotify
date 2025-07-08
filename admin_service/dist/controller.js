@@ -32,7 +32,7 @@ export const addAlbum = TryCatch(async (req, res) => {
   `;
     res.json({
         message: "Album Created",
-        album: result[0],
+        album: result,
     });
 });
 export const addSong = TryCatch(async (req, res) => {

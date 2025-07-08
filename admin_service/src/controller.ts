@@ -50,7 +50,7 @@ export const addAlbum = TryCatch(async (req: AuthencatedRequest, res) => {
 
     res.json({
         message: "Album Created",
-        album: result[0],
+        album: result,
     });
 });
 
