@@ -1,8 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
+import { sql } from "./config/db.js";
+import adminRoutes from "./route.js";
 import cloudinary from "cloudinary";
+
 import cors from "cors";
-import { sql } from "./config/db.js"; 
 
 dotenv.config();
 
@@ -16,6 +18,7 @@ cloudinary.v2.config({
 const app = express();
 
 app.use(cors());
+
 app.use(express.json());
 
 async function initDB() {
@@ -48,12 +51,7 @@ async function initDB() {
   }
 }
 
-
-app.use("/api/v1", async (req,res) => {
-    res.status(200).json({
-        message: "Welcome to the Admin Service"
-    });
-});
+app.use("/api/v1", adminRoutes);
 
 const port = process.env.PORT;
 

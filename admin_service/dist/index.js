@@ -1,8 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
+import { sql } from "./config/db.js";
+import adminRoutes from "./route.js";
 import cloudinary from "cloudinary";
 import cors from "cors";
-import { sql } from "./config/db.js";
 dotenv.config();
 cloudinary.v2.config({
     cloud_name: process.env.Cloud_Name,
@@ -40,11 +41,7 @@ async function initDB() {
         console.log("Error initDb", error);
     }
 }
-app.use("/api/v1", async (req, res) => {
-    res.status(200).json({
-        message: "Welcome to the Admin Service"
-    });
-});
+app.use("/api/v1", adminRoutes);
 const port = process.env.PORT;
 initDB().then(() => {
     app.listen(port, () => {
